@@ -1,0 +1,65 @@
+-- Script para crear la tabla formulario_cliente en PostgreSQL
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+CREATE TABLE formulario_cliente (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    nombre_completo VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    telefono BIGINT NOT NULL,
+    mensaje VARCHAR(2000) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Índices para mejorar el rendimiento
+CREATE INDEX idx_formulario_cliente_email ON formulario_cliente(email);
+CREATE INDEX idx_formulario_cliente_created_at ON formulario_cliente(created_at);
+
+-- Función para actualizar updated_at automáticamente
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+-- Trigger para actualizar updated_at
+CREATE TRIGGER update_formulario_cliente_updated_at 
+    BEFORE UPDATE ON formulario_cliente 
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+
+-- Script para crear la tabla formulario_cliente en PostgreSQL
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+-- Eliminar tabla si existe (para recrear)
+DROP TABLE IF EXISTS formulario_cliente;
+
+CREATE TABLE formulario_cliente (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    nombre_completo VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    telefono BIGINT NOT NULL CHECK (telefono > 0 AND telefono <= 9223372036854775807),
+    mensaje VARCHAR(2000) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Índices para mejorar el rendimiento
+CREATE INDEX idx_formulario_cliente_email ON formulario_cliente(email);
+CREATE INDEX idx_formulario_cliente_created_at ON formulario_cliente(created_at);
+
+-- Función para actualizar updated_at automáticamente
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+-- Trigger para actualizar updated_at
+CREATE TRIGGER update_formulario_cliente_updated_at 
+    BEFORE UPDATE ON formulario_cliente 
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
